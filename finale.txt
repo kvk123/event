@@ -1,0 +1,239 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+typedef struct node
+{
+    char name[30];
+    long num;
+    char id[30];
+    float amt;
+    char venue[25];
+    struct node * next;
+}NODE;
+
+void display_full(NODE *first)
+{
+    if(first==NULL)
+    {
+        printf("\nEmpty List");
+        return;
+    }
+    while(first!=NULL)
+    {
+        printf("\nName: %s\nContact no.: %ld\nEmail: %s\nAmount: %f\nVenue: %s",first->name,first->num,first->id,first->amt,first->venue);
+        first=first->next;
+    }
+}
+void first_node(NODE *first)
+{
+    if(first==NULL)
+    {
+        printf("\nEmpty List");
+        return;
+    }
+    printf("\nName: %s\nContact no.: %ld\nEmail: %s\nAmount: %f\nVenue: %s",first->name,first->num,first->id,first->amt,first->venue);
+}
+NODE *del_first(NODE*first)
+{
+    NODE *temp;
+    temp=first;
+    first=first->next;
+    free(temp);
+    return (first);
+}
+
+void copy(NODE *first)
+{
+
+    FILE *fp;
+    fp=fopen(first->name,"w");
+    fprintf(fp,"%s\n%ld\n%s\n%f\n%s",first->name,first->num,first->id,first->amt,first->venue);
+    fclose(fp);
+    first=del_first(first);
+
+}
+
+
+
+NODE *authority(NODE * first)
+{
+    int ch;
+    char enpass[10],pass[10];
+    int a,i;
+    FILE *psr;
+    printf("\nEnter password(3 characters): ");
+    for(i=0;i<3;i++)
+    {
+        enpass[i]=getch();
+        printf("*");
+    }
+    enpass[i]='\0';
+    //scanf("%s",&enpass);
+    psr=fopen("password.txt","r");
+        while(fscanf(psr,"%s",&pass)!=EOF)
+    {
+        if(strcmp(enpass,pass)==0)
+        {
+    printf("\nHI!!ADMIN,HOW MAY I HELP YOU SIR");
+    printf("\n 1.DISPLAY ALL ORDER \n 2.DISPLAY THE PRIORITY ORDER \n 3.GENERATE THE BILL \n 4.EXIT");
+    scanf("%d",&ch);
+    switch(ch)
+    {
+        case 1:display_full(first);
+                break;
+        case 2:first_node(first);
+                break;
+        case 3:copy(first);
+                break;
+        case 4:exit(0);
+        default:printf("\n WRONG CHOICE");
+    }
+        }
+    else
+        {
+            printf("\nInvalid password!");
+            printf("\nPress 1 exit");
+            scanf("%d",&a);
+            if(a==1)
+                exit(0);
+
+        }
+    }
+    fclose(psr);
+    return first;
+}
+char hotel(void)
+{
+    int ch;
+    printf("\n1.Vilasi\n2.Hut\n3.Pakwaan\n");
+    scanf("%d",&ch);
+    switch(ch)
+    {
+        case 1:
+        return 'V';
+        case 2: //strcpy(h,"Hut");
+        return 'H';
+        case 3: //strcpy(h,"Pakwaan");
+        return 'P';
+    }
+}
+char spot(void)
+{
+    int ch;
+    printf("\n1.Coorg\n2.Pondicherry\n3.Delhi\n");
+    scanf("%d",&ch);
+    switch(ch)
+    {
+        case 1: //strcpy(s,"Coorg");
+                return 'C';
+        case 2: //strcpy(s,"Pondicherry");
+                return 'P';
+        case 3: //strcpy(s,"Delhi");
+                return 'D';
+    }
+}
+NODE * party(NODE *first)
+{
+    NODE * newnode;
+    char h;
+    newnode=(NODE *)malloc(sizeof(NODE));
+    printf("\n ENTER ORGANISER NAME:");
+    scanf("%s",newnode->name);
+    printf("\n ENTER YOUR NUMBER:");
+    scanf("%ld",&newnode->num);
+    printf("\n ENTER YOUR EMAIL ID:");
+    scanf("%s",newnode->id);
+    printf("\n ENTER YOUR BUDGET:");
+    scanf("%f",&newnode->amt);
+    printf("\n ENTER THE VENUE:");
+    h=hotel();
+    if(h=='V')
+        strcpy(newnode->venue,"Vilasi");
+    else if(h=='H')
+        strcpy(newnode->venue,"Hut");
+    else
+        strcpy(newnode->venue,"Pakwaan");
+    printf("\n\t\t\t\tYour booking has been confirmed!!!!!");
+    newnode->next=first;
+    first=newnode;
+    return(first);
+
+}
+
+NODE* travel(NODE *first)
+{
+    NODE *newnode;
+    char s;
+    newnode=(NODE*)malloc(sizeof(NODE));
+    printf("\nEnter your name:");
+    scanf("%s",newnode->name);
+    printf("\nEnter your contact no:");
+    scanf("%ld",&newnode->num);
+    printf("\nEnter your email:");
+    scanf("%s",newnode->id);
+    printf("\nBudget:");
+    scanf("%f",&newnode->amt);
+    printf("\nTourist Spot");
+    s=spot();
+    if(s=='P')
+        strcpy(newnode->venue,"Pondicherry");
+    else if(s=='C')
+        strcpy(newnode->venue,"Coorg");
+    else
+        strcpy(newnode->venue,"Delhi");
+    printf("\n\t\t\t\tYour booking has been confirmed!!!!");
+    newnode->next=first;
+    first=newnode;
+    return (first);
+}
+
+NODE * customer(NODE * first)
+{
+
+    int ch;
+    printf("\n WHAT TYPE OF EVENT YOU WANT?");
+    printf("\n 1.PARTY \n 2.TRAVEL\n");
+    scanf("%d",&ch);
+    switch(ch)
+    {
+        case 1:first=party(first);
+                break;
+        case 2:first=travel(first);
+                break;
+        default:printf("\n WRONG CHOICE");
+    }
+    return first;
+}
+
+
+
+int main()
+{
+
+    system("color 6b");
+    int ch;
+    NODE * first=NULL;
+
+    while(1)
+
+    {
+    printf("\n\t\t\t\t\t\t  Plantastic");
+    printf("\n\t\t\t\tWelcome to the One Stop Site for All Your Bookings!!!!\n");
+    printf("\n1.Customer\t\t\t\t\t2.Admin\t\t\t\t\t3.Exit\n");
+    scanf("%d",&ch);
+    switch(ch)
+    {
+        case 1: first=customer(first);
+                break;
+        case 2: first=authority(first);
+                break;
+        case 3: exit(0);
+                break;
+        default:printf("Wrong Choice");
+    }
+    }
+    return 0;
+}
+
+
